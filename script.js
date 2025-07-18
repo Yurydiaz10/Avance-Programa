@@ -1,177 +1,162 @@
-const mallaDiv = document.getElementById("malla");
+const ramos = [
+  // Primer año
+  // 1er Semestre
+  { nombre: "Cálculo", semestre: 1, abre: ["Álgebra Lineal", "Matemática para finanzas"] },
+  { nombre: "Introducción a la contaduría pública", semestre: 1 },
+  { nombre: "Fundamentos de contabilidad", semestre: 1, abre: ["Contabilidad de los recursos y obligaciones de corto plazo", "Costos"] },
+  { nombre: "Taller de habilidades informáticas para la gestión", semestre: 1, abre: ["Sistemas de información y bases de datos contables"] },
+  { nombre: "Introducción al derecho y constitución política", semestre: 1, abre: ["Legislación comercial I", "Legislación laboral", "Hacienda pública", "Impuesto a la renta y complementarios, impuesto al patrimonio"] },
+  { nombre: "Estilos de vida saludable", semestre: 1 },
 
-const semestres = [
-  {
-    titulo: "1er Semestre",
-    ramos: [
-      { nombre: "Cálculo", id: "calculo", desbloquea: ["algebra", "matematica"] },
-      { nombre: "Introducción a la contaduría pública", id: "intro_conta" },
-      { nombre: "Fundamentos de contabilidad", id: "fund_conta", desbloquea: ["conta_corto", "costos"] },
-      { nombre: "Taller de habilidades informáticas para la gestión", id: "tic", desbloquea: ["sis_info"] },
-      { nombre: "Introducción al derecho y constitución política", id: "intro_derecho", desbloquea: ["leg1", "laboral", "hacienda", "renta"] },
-      { nombre: "Estilos de vida saludable", id: "vida" }
-    ]
-  },
-  {
-    titulo: "2do Semestre",
-    ramos: [
-      { nombre: "Álgebra Lineal", id: "algebra", requiere: ["calculo"], desbloquea: ["estadistica1", "investigacion"] },
-      { nombre: "Matemática para finanzas", id: "matematica", requiere: ["calculo"], desbloquea: ["evaluacion"] },
-      { nombre: "Contabilidad de los recursos y obligaciones de corto plazo", id: "conta_corto", requiere: ["fund_conta"], desbloquea: ["conta_largo"] },
-      { nombre: "Comprensión y producción de textos académicos generales", id: "textos" },
-      { nombre: "Legislación comercial I", id: "leg1", requiere: ["intro_derecho"], desbloquea: ["leg2"] },
-      { nombre: "Fundamentos de economía y comercio", id: "eco1", desbloquea: ["macro", "hacienda"] }
-    ]
-  },
-  {
-    titulo: "3er Semestre",
-    ramos: [
-      { nombre: "Estadística I para las ciencias de la administración", id: "estadistica1", requiere: ["algebra"], desbloquea: ["estadistica2"] },
-      { nombre: "Proceso administrativo", id: "procesos", desbloquea: ["costos"] },
-      { nombre: "Contabilidad de los recursos y obligaciones de largo plazo y patrimonio", id: "conta_largo", requiere: ["conta_corto"], desbloquea: ["informes"] },
-      { nombre: "Legislación laboral", id: "laboral", requiere: ["intro_derecho"] },
-      { nombre: "Legislación comercial II", id: "leg2", requiere: ["leg1"] },
-      { nombre: "Macroeconomía y coyuntura", id: "macro", requiere: ["eco1"], desbloquea: ["empresa"] },
-      { nombre: "Inglés con fines generales y académicos I", id: "ingles1", desbloquea: ["ingles2"] }
-    ]
-  },
-  {
-    titulo: "4to Semestre",
-    ramos: [
-      { nombre: "Estadística II para las ciencias de la administración", id: "estadistica2", requiere: ["estadistica1"] },
-      { nombre: "Investigación y gestión de operaciones", id: "investigacion", requiere: ["algebra"] },
-      { nombre: "Informes financieros", id: "informes", requiere: ["conta_largo"], desbloquea: ["control", "conta_esp1", "publica"] },
-      { nombre: "Hacienda pública", id: "hacienda", requiere: ["intro_derecho", "eco1"], desbloquea: ["publica"] },
-      { nombre: "Economía de empresa", id: "empresa", requiere: ["macro"] },
-      { nombre: "Inglés con fines generales y académicos II", id: "ingles2", requiere: ["ingles1"], desbloquea: ["ingles3"] },
-      { nombre: "Formación social y ciudadana", id: "formacion1" }
-    ]
-  },
-  {
-    titulo: "5to Semestre",
-    ramos: [
-      { nombre: "Humanismo, pensamiento administrativo y organizaciones", id: "humanismo" },
-      { nombre: "Fundamentos de control, auditoría y aseguramiento", id: "control", requiere: ["informes"], desbloquea: ["auditoria"] },
-      { nombre: "Contabilidades especiales I", id: "conta_esp1", requiere: ["informes"], desbloquea: ["conta_esp2"] },
-      { nombre: "Costos", id: "costos", requiere: ["procesos", "fund_conta"], desbloquea: ["presupuestos"] },
-      { nombre: "Ciencias humanas", id: "humanas" },
-      { nombre: "Contabilidad pública", id: "publica", requiere: ["informes", "hacienda"] },
-      { nombre: "Inglés con fines generales y académicos III", id: "ingles3", requiere: ["ingles2"], desbloquea: ["ingles4"] }
-    ]
-  },
-  {
-    titulo: "6to Semestre",
-    ramos: [
-      { nombre: "Impuesto a la renta y complementarios, impuesto al patrimonio", id: "renta", requiere: ["intro_derecho"], desbloquea: ["iva"] },
-      { nombre: "Auditoría, riesgos y aseguramiento", id: "auditoria", requiere: ["control"], desbloquea: ["gestion"] },
-      { nombre: "Contabilidades especiales II", id: "conta_esp2", requiere: ["conta_esp1"] },
-      { nombre: "Presupuestos", id: "presupuestos", requiere: ["costos"], desbloquea: ["admin"] },
-      { nombre: "Seminario de teoría contable", id: "seminario" },
-      { nombre: "Inglés con fines generales y académicos IV", id: "ingles4", requiere: ["ingles3"] },
-      { nombre: "Electiva profesional I", id: "electiva1" }
-    ]
-  },
-  {
-    titulo: "7mo Semestre",
-    ramos: [
-      { nombre: "Impuestos de IVA y consumo, y Mecanismo de retención en la fuente", id: "iva", requiere: ["renta"], desbloquea: ["procedimiento"] },
-      { nombre: "Control de gestión y gobierno corporativo", id: "gestion", requiere: ["auditoria"], desbloquea: ["revisoria"] },
-      { nombre: "Administración y gestión financiera", id: "admin", requiere: ["presupuestos"] },
-      { nombre: "Sistemas de información y bases de datos contables", id: "sis_info", requiere: ["tic"], desbloquea: ["lab2", "seguridad"] },
-      { nombre: "Laboratorio contable I", id: "lab1", desbloquea: ["lab2"] },
-      { nombre: "Electiva profesional II", id: "electiva2" }
-    ]
-  },
-  {
-    titulo: "8vo Semestre",
-    ramos: [
-      { nombre: "Procedimiento tributario", id: "procedimiento", requiere: ["iva"] },
-      { nombre: "Revisoría fiscal", id: "revisoria", requiere: ["gestion"] },
-      { nombre: "Laboratorio contable II", id: "lab2", requiere: ["lab1", "sis_info"] },
-      { nombre: "Evaluación financiera de proyectos", id: "evaluacion", requiere: ["matematica"] },
-      { nombre: "Seguridad de la información contable", id: "seguridad", requiere: ["sis_info"] },
-      { nombre: "Taller de escritura científica", id: "escritura" }
-    ]
-  },
-  {
-    titulo: "9no Semestre",
-    ramos: [
-      { nombre: "Contabilidad de gestión", id: "gestion_contable" },
-      { nombre: "Ética y desarrollo profesional", id: "etica" },
-      { nombre: "Taller de habilidades gerenciales enfoque contable financiero", id: "gerencial" },
-      { nombre: "Formación social y ciudadana II", id: "formacion2" },
-      { nombre: "Inteligencia de negocios y analítica de datos para la gestión", id: "inteligencia" },
-      { nombre: "Electiva profesional III", id: "electiva3" }
-    ]
-  },
-  {
-    titulo: "10mo Semestre",
-    ramos: [
-      { nombre: "Electiva profesional IV", id: "electiva4" },
-      { nombre: "Electiva profesional V", id: "electiva5" },
-      { nombre: "Trabajo de grado", id: "grado" },
-      { nombre: "Artístico humanístico", id: "artistico" },
-      { nombre: "Consultorio empresarial", id: "consultorio" }
-    ]
-  }
+  // 2do Semestre
+  { nombre: "Álgebra Lineal", semestre: 2, prerequisitos: ["Cálculo"], abre: ["Estadística I para las ciencias de la administración", "Investigación y gestión de operaciones"] },
+  { nombre: "Matemática para finanzas", semestre: 2, prerequisitos: ["Cálculo"], abre: ["Evaluación financiera de proyectos"] },
+  { nombre: "Contabilidad de los recursos y obligaciones de corto plazo", semestre: 2, prerequisitos: ["Fundamentos de contabilidad"], abre: ["Contabilidad de los recursos y obligaciones de largo plazo y patrimonio"] },
+  { nombre: "Comprensión y producción de textos académicos generales", semestre: 2 },
+  { nombre: "Legislación comercial I", semestre: 2, prerequisitos: ["Introducción al derecho y constitución política"], abre: ["Legislación comercial II"] },
+  { nombre: "Fundamentos de economía y comercio", semestre: 2, abre: ["Macroeconomía y coyuntura", "Hacienda pública"] },
+
+  // Segundo año
+  // 3er Semestre
+  { nombre: "Estadística I para las ciencias de la administración", semestre: 3, prerequisitos: ["Álgebra Lineal"], abre: ["Estadística II para las ciencias de la administración"] },
+  { nombre: "Proceso administrativo", semestre: 3, abre: ["Costos"] },
+  { nombre: "Contabilidad de los recursos y obligaciones de largo plazo y patrimonio", semestre: 3, prerequisitos: ["Contabilidad de los recursos y obligaciones de corto plazo"], abre: ["Informes financieros"] },
+  { nombre: "Legislación laboral", semestre: 3, prerequisitos: ["Introducción al derecho y constitución política"] },
+  { nombre: "Legislación comercial II", semestre: 3, prerequisitos: ["Legislación comercial I"] },
+  { nombre: "Macroeconomía y coyuntura", semestre: 3, prerequisitos: ["Fundamentos de economía y comercio"], abre: ["Economía de empresa"] },
+  { nombre: "Inglés con fines generales y académicos I", semestre: 3, abre: ["Inglés con fines generales y académicos II"] },
+
+  // 4to Semestre
+  { nombre: "Estadística II para las ciencias de la administración", semestre: 4, prerequisitos: ["Estadística I para las ciencias de la administración"] },
+  { nombre: "Investigación y gestión de operaciones", semestre: 4, prerequisitos: ["Álgebra Lineal"] },
+  { nombre: "Informes financieros", semestre: 4, prerequisitos: ["Contabilidad de los recursos y obligaciones de largo plazo y patrimonio"], abre: ["Fundamentos de control, auditoría y aseguramiento", "Contabilidades especiales I", "Contabilidad pública"] },
+  { nombre: "Hacienda pública", semestre: 4, prerequisitos: ["Introducción al derecho y constitución política", "Fundamentos de economía y comercio"], abre: ["Contabilidad pública"] },
+  { nombre: "Economía de empresa", semestre: 4, prerequisitos: ["Macroeconomía y coyuntura"] },
+  { nombre: "Inglés con fines generales y académicos II", semestre: 4, prerequisitos: ["Inglés con fines generales y académicos I"], abre: ["Inglés con fines generales y académicos III"] },
+  { nombre: "Formación social y ciudadana", semestre: 4 },
+
+  // Tercer año
+  // 5to Semestre
+  { nombre: "Humanismo, pensamiento administrativo y organizaciones – cátedra", semestre: 5 },
+  { nombre: "Fundamentos de control, auditoría y aseguramiento", semestre: 5, prerequisitos: ["Informes financieros"], abre: ["Auditoría, riesgos y aseguramiento"] },
+  { nombre: "Contabilidades especiales I", semestre: 5, prerequisitos: ["Informes financieros"], abre: ["Contabilidades especiales II"] },
+  { nombre: "Costos", semestre: 5, prerequisitos: ["Fundamentos de contabilidad", "Proceso administrativo"], abre: ["Presupuestos"] },
+  { nombre: "Ciencias humanas", semestre: 5 },
+  { nombre: "Contabilidad pública", semestre: 5, prerequisitos: ["Informes financieros", "Hacienda pública"] },
+  { nombre: "Inglés con fines generales y académicos III", semestre: 5, prerequisitos: ["Inglés con fines generales y académicos II"], abre: ["Inglés con fines generales y académicos IV"] },
+
+  // 6to Semestre
+  { nombre: "Impuesto a la renta y complementarios, impuesto al patrimonio", semestre: 6, prerequisitos: ["Introducción al derecho y constitución política"], abre: ["Impuestos de IVA y consumo, y Mecanismo de retención en la fuente"] },
+  { nombre: "Auditoría, riesgos y aseguramiento", semestre: 6, prerequisitos: ["Fundamentos de control, auditoría y aseguramiento"], abre: ["Control de gestión y gobierno corporativo"] },
+  { nombre: "Contabilidades especiales II", semestre: 6, prerequisitos: ["Contabilidades especiales I"] },
+  { nombre: "Presupuestos", semestre: 6, prerequisitos: ["Costos"], abre: ["Administración y gestión financiera"] },
+  { nombre: "Seminario de teoría contable", semestre: 6 },
+  { nombre: "Inglés con fines generales y académicos IV", semestre: 6, prerequisitos: ["Inglés con fines generales y académicos III"] },
+  { nombre: "Electiva profesional I", semestre: 6 },
+
+  // Cuarto año
+  // 7mo Semestre
+  { nombre: "Impuestos de IVA y consumo, y Mecanismo de retención en la fuente", semestre: 7, prerequisitos: ["Impuesto a la renta y complementarios, impuesto al patrimonio"], abre: ["Procedimiento tributario"] },
+  { nombre: "Control de gestión y gobierno corporativo", semestre: 7, prerequisitos: ["Auditoría, riesgos y aseguramiento"], abre: ["Revisoría fiscal"] },
+  { nombre: "Administración y gestión financiera", semestre: 7, prerequisitos: ["Presupuestos"] },
+  { nombre: "Sistemas de información y bases de datos contables", semestre: 7, prerequisitos: ["Taller de habilidades informáticas para la gestión"], abre: ["Laboratorio contable II", "Seguridad de la información contable"] },
+  { nombre: "Laboratorio contable I", semestre: 7, abre: ["Laboratorio contable II"] },
+  { nombre: "Electiva profesional II", semestre: 7 },
+
+  // 8vo Semestre
+  { nombre: "Procedimiento tributario", semestre: 8, prerequisitos: ["Impuestos de IVA y consumo, y Mecanismo de retención en la fuente"] },
+  { nombre: "Revisoría fiscal", semestre: 8, prerequisitos: ["Control de gestión y gobierno corporativo"] },
+  { nombre: "Laboratorio contable II", semestre: 8, prerequisitos: ["Laboratorio contable I", "Sistemas de información y bases de datos contables"] },
+  { nombre: "Evaluación financiera de proyectos", semestre: 8, prerequisitos: ["Matemática para finanzas"] },
+  { nombre: "Seguridad de la información contable", semestre: 8, prerequisitos: ["Sistemas de información y bases de datos contables"] },
+  { nombre: "Taller de escritura científica", semestre: 8 },
+
+  // Quinto año
+  // 9no Semestre
+  { nombre: "Contabilidad de gestión", semestre: 9 },
+  { nombre: "Ética y desarrollo profesional", semestre: 9 },
+  { nombre: "Taller de habilidades gerenciales enfoque contable financiero", semestre: 9 },
+  { nombre: "Formación social y ciudadana", semestre: 9 },
+  { nombre: "Inteligencia de negocios y analítica de datos para la gestión", semestre: 9 },
+  { nombre: "Electiva profesional III", semestre: 9 },
+
+  // 10mo Semestre
+  { nombre: "Electiva profesional IV", semestre: 10 },
+  { nombre: "Electiva profesional V", semestre: 10 },
+  { nombre: "Trabajo de grado", semestre: 10 },
+  { nombre: "Artístico humanístico", semestre: 10 },
+  { nombre: "Consultorio empresarial", semestre: 10 },
 ];
 
-const crearSemestre = (semestre) => {
-  const container = document.createElement("div");
-  container.className = "semestre";
-  const titulo = document.createElement("h2");
-  titulo.textContent = semestre.titulo;
-  container.appendChild(titulo);
+// Lógica de interacción
+const malla = document.getElementById("malla");
+const ramosMap = {};
+let aprobados = new Set();
 
-  semestre.ramos.forEach(ramo => {
+function cargarAprobados() {
+  const data = localStorage.getItem("ramosAprobados");
+  if (data) aprobados = new Set(JSON.parse(data));
+}
+
+function guardarAprobados() {
+  localStorage.setItem("ramosAprobados", JSON.stringify([...aprobados]));
+}
+
+function crearSemestres() {
+  for (let i = 1; i <= 10; i++) {
+    const contenedor = document.createElement("div");
+    contenedor.className = "semestre";
+    contenedor.id = `semestre-${i}`;
+    const titulo = document.createElement("h2");
+    titulo.textContent = `${i}º Semestre`;
+    contenedor.appendChild(titulo);
+    malla.appendChild(contenedor);
+  }
+}
+
+function crearRamos() {
+  ramos.forEach(ramo => {
     const div = document.createElement("div");
     div.className = "ramo bloqueado";
-    div.innerText = ramo.nombre;
-    div.id = ramo.id;
-    div.onclick = () => aprobarRamo(ramo, div);
-    container.appendChild(div);
-  });
-
-  mallaDiv.appendChild(container);
-};
-
-function desbloquearRamo(id) {
-  const elem = document.getElementById(id);
-  if (elem && elem.classList.contains("bloqueado")) {
-    elem.classList.remove("bloqueado");
-  }
-}
-
-function aprobarRamo(ramo, div) {
-  if (div.classList.contains("bloqueado") || div.classList.contains("aprobado")) return;
-
-  div.classList.add("aprobado");
-
-  if (ramo.desbloquea) {
-    ramo.desbloquea.forEach(id => {
-      const dependiente = encontrarRamoPorId(id);
-      const prereqs = dependiente?.requiere || [];
-      const todosAprobados = prereqs.every(rid => document.getElementById(rid)?.classList.contains("aprobado"));
-      if (todosAprobados) desbloquearRamo(id);
-    });
-  }
-}
-
-function encontrarRamoPorId(id) {
-  for (const semestre of semestres) {
-    const ramo = semestre.ramos.find(r => r.id === id);
-    if (ramo) return ramo;
-  }
-  return null;
-}
-
-function inicializar() {
-  semestres.forEach(crearSemestre);
-  semestres.forEach(sem => {
-    sem.ramos.forEach(ramo => {
-      if (!ramo.requiere || ramo.requiere.length === 0) desbloquearRamo(ramo.id);
-    });
+    div.textContent = ramo.nombre;
+    div.dataset.nombre = ramo.nombre;
+    div.onclick = () => aprobarRamo(div, ramo);
+    ramosMap[ramo.nombre] = div;
+    document.getElementById(`semestre-${ramo.semestre}`).appendChild(div);
   });
 }
 
-inicializar();
+function restaurarEstado() {
+  ramos.forEach(ramo => {
+    const div = ramosMap[ramo.nombre];
+    if (aprobados.has(ramo.nombre)) {
+      div.classList.add("aprobado");
+    }
+  });
+}
+
+function actualizarBloqueos() {
+  ramos.forEach(ramo => {
+    const div = ramosMap[ramo.nombre];
+    const requisitos = ramo.prerequisitos || [];
+    const habilitado = requisitos.every(pr => ramosMap[pr]?.classList.contains("aprobado"));
+    if (habilitado) div.classList.remove("bloqueado");
+    else div.classList.add("bloqueado");
+  });
+}
+
+function aprobarRamo(div, ramo) {
+  if (div.classList.contains("bloqueado")) return;
+  div.classList.toggle("aprobado");
+  if (div.classList.contains("aprobado")) aprobados.add(ramo.nombre);
+  else aprobados.delete(ramo.nombre);
+  guardarAprobados();
+  actualizarBloqueos();
+}
+
+// Inicialización
+cargarAprobados();
+crearSemestres();
+crearRamos();
+restaurarEstado();
+actualizarBloqueos();
