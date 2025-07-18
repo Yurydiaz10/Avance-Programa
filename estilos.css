@@ -47,3 +47,12 @@ h1 {
   color: #999;
   cursor: not-allowed;
 }
+.semestre {
+  border-top: 2px dashed #c2185b;
+  margin-top: 20px;
+  padding-top: 10px;
+}
+.semestre h2 {
+  color: #880e4f;
+  margin-bottom: 10px;
+}
